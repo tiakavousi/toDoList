@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <!--font awsome-->
+    <script src="https://kit.fontawesome.com/dda8170db4.js" crossorigin="anonymous"></script>
+    <!--google fonts-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abel&family=Anton&family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Lexend+Deca&family=Livvic:ital,wght@0,100;0,200;0,300;1,100;1,200;1,300&display=swap">
+    <!--custom style-->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1 class="logo">ToDo<span>!</span></h2>
+    </header>
+
+    <main>
+       
+        <form class="container">
+            <input type="text" name="task" id="input" val="" placeholder="new task ...">
+            <button type="submit" id='add'><i class="fas fa-plus-square"></i></button>
+        </form>
+
+        
+        <div class="grid_container">
+            <div class="box toDo">
+                <h2>To Do</h2>
+                <p id="placeHolderToDo"class="placeHolder">No Task To Do</p>
+                <ol id="toDoList"></ol>
+                <button class="hidden deleteAll"> Delete All</button>
+            </div>
+            <div class="box doing">
+                <h2>Doing</h2>
+                <p id="placeHolderDoing"class="placeHolder">No Task In Progress</p>
+                <ol id="doingList"></ol>
+            </div>
+            <div class="box done">
+                <h2>Done</h2>
+                <p id="placeHolderDone"class="placeHolder">No Task Has Done yet</p>
+                <ol id="doneList"></ol>
+            </div>
+        </div>
+        <div>
+            <button id="clearThePage">Clear The Page</button>
+        </div>
+    </main>
+    
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <!--custom script-->
+    <script src="app.js"></script>
+</body>
+</html>
