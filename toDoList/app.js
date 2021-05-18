@@ -119,6 +119,28 @@ $(function(){
 });
 
 
+// indexedDB and Storing Data
+
+(function(){
+    var db;
+    databaseOpen(function(){
+        alert("The database has been opened");
+    });
+    function databaseOpen(callback){
+        var version = 1;
+        var request = indexedDB.open('todos', version);
+        request.onsuccess = function(event){
+            db = event.target.result;
+            callback();
+        };
+        request.onerror = databaseError;
+    }
+    function databaseError(error){
+        console.error("An IndexedDB error has occurred", error);
+    }
+}());
+
+
 
 
 
