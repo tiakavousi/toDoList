@@ -1,24 +1,28 @@
+var timeStamp, obj, version;
 
+
+// Events ******************************************************
 $(function(){
 
-    let toDoTasks;
-    let doingTasks;
-    let doneTasks;
+    let toDoTasks, doingTasks, doneTasks;
 
+    //submit event on form 
+    $('form').on('submit',handleSubmit);
 
-    //submit event on form :
-    $('form').on('submit',handelSubmitForm);
-    $('ol').on('click', handle_start_Delete_edit_finish);
+    $('ol').on('click', handleButtons);
+
     $('.deleteAll').on('click', handleDeleteAll);
+
     $(document).on('dbclick', function(e){
         e.preventDefault();
     });
+
     $('#clearThePage').on('click', clearThePage);
     
-    //handlers 
+    //handlers
 
-    function handelSubmitForm(event){
-        event.preventDefault();
+    function handleSubmit(e){
+        e.preventDefault();
         let val = $('#input').val();
         if (val != ''){
             let htmlString = '<span class="textItem" contenteditable="true">'+ val+'</span>'
@@ -28,33 +32,39 @@ $(function(){
             $('#toDoList').append(elem);
             $('#placeHolderToDo').addClass('hidden');
             $('#input').val('');
-
-            toDoTasks = $('#toDoList>li').get();
+            obj = {task:val, timeStamp:Date.now()};
+            $(toDoTasks).add(obj);
+            console.log(toDoTasks); 
             if(toDoTasks.length > 1){
                 $('.deleteAll').removeClass('hidden');
             }
         }
     }
 
-    function handle_start_Delete_edit_finish(e){
+    function handleButtons(e){
         let target = $(e.target);
         if(target.hasClass('start')){
             startToDo(e);
+            version +=1;
         }
         if(target.hasClass('trash')){
             deleteToDo(e);
+            version +=1;
         }
         if(target.hasClass('edit')){
             editToDo(e);
+            version +=1;
         }
         if(target.hasClass('finish')){
             finishDoing(e);
+            version +=1;
         }
     }
 
-    function deleteToDo (e){
+    function deleteToDo(e){
         let item = $(e.target).parent();
         item.remove();
+        version +=1;
         if(item.hasClass('toDoItem')) toDoTasks.pop();
         if(item.hasClass('doingItem')) doingTasks.pop();
         if(item.hasClass('doneItem')) doneTasks.pop();
@@ -81,6 +91,7 @@ $(function(){
         item.addClass('doingItem');
         $('li.started>i.start').remove();
         item.append('<i class="finish fas fa-check"></i>');
+        version +=1;
         toDoTasks.pop();
         if(toDoTasks.length == 0)$('#placeHolderToDo').removeClass('hidden');
         if(toDoTasks.length < 2){
@@ -97,6 +108,7 @@ $(function(){
         item.removeClass('doingItem');
         item.addClass('doneItem');
         $('li.finished>i.finish').remove();
+        version +=1;
         doingTasks.pop();
         if(doingTasks.length == 0)$('#placeHolderDoing').removeClass('hidden');
         doneTasks = $('#doneList>li').get();
@@ -106,6 +118,7 @@ $(function(){
         $('#toDoList').remove();
         $(this).addClass('hidden');
         $('#placeHolderDone').removeClass("hidden");
+        version +=1;
         toDoTasks = [];
     }
 
@@ -114,34 +127,36 @@ $(function(){
         $('#placeHolderToDo').removeClass("hidden");
         $('#placeHolderDoing').removeClass("hidden");
         $('#placeHolderDone').removeClass("hidden");
+        version +=1;
     }
-    
+   
 });
 
+// indexedDB ***************************************************
 
-// indexedDB and Storing Data
-
-(function(){
-    var db;
-    databaseOpen(function(){
-        alert("The database has been opened");
-    });
-    function databaseOpen(callback){
-        var version = 1;
-        var request = indexedDB.open('todos', version);
-        request.onsuccess = function(event){
-            db = event.target.result;
-            callback();
-        };
-        request.onerror = databaseError;
+var idbApp = (function() {
+    if (!('indexedDB' in window)) {
+        console.log('This browser doesn\'t support IndexedDB');
+        return;
     }
-    function databaseError(error){
-        console.error("An IndexedDB error has occurred", error);
-    }
-}());
-
-
-
-
-
+    var dbPromise = idb.open('tasks', 3, function(upgradeDb){
+        switch(upgradeDb.oldVersion){
+            case 0:
+                // a placeholder case so that the switch block will
+                // execute when the database is first created
+                // (oldVersion is 0)
+            case 1 :
+                console.log('Creating the todos object store');
+                upgradeDb.createObjectStore('todos', {keyPath:'timestamp'});
+            case 2 :
+                console.log('Creating the doing object store');
+                upgradeDb.createObjectStore('doings', {keyPath: 'timeStamp'});
+            case 3 :
+                console.log('Creating the done object store');
+                upgradeDb.createObjectStore('dones)', {keyPath: 'timeStamp'});
+        }
+    })
+})();
+    
+    
 
